@@ -40,23 +40,23 @@ void upheap(heap_t *heap, size_t posicion) {
 }
 
 
-size_t max(heap_t *heap, size_t posicion_a, size_t posicion_b) {
+size_t max(void** vector, cmp_func_t cmp, size_t posicion_a, size_t posicion_b) {
 	if (!posicion_a) return posicion_b;
 	if (!posicion_b) return posicion_a;
-	return (heap->cmp(heap->vector[posicion_a], heap->vector[posicion_b]) < 0) ? posicion_b : posicion_a;
+	return (cmp(vector[posicion_a], vector[posicion_b]) < 0) ? posicion_b : posicion_a;
 }
 
 
-void downheap(heap_t *heap, size_t posicion) {
+void downheap(void **vector, size_t tam_vector, cmp_func_t cmp, size_t posicion) {
 	size_t pos_hijo_izq = (2 * posicion) + 1;
 	size_t pos_hijo_der = (2 * posicion) + 2;
-	if (pos_hijo_izq >= heap->cantidad - 1) pos_hijo_izq = false;
-	if (pos_hijo_der >= heap->cantidad - 1) pos_hijo_der = false;
+	if (pos_hijo_izq >= tam_vector - 1) pos_hijo_izq = false;
+	if (pos_hijo_der >= tam_vector - 1) pos_hijo_der = false;
 	if (!pos_hijo_izq && !pos_hijo_der) return;
-	size_t pos_hijo_mayor = max(heap, pos_hijo_izq, pos_hijo_der);
-	if (heap->cmp(heap->vector[posicion], heap->vector[pos_hijo_mayor]) < 0) {
-		swap(heap->vector, posicion, pos_hijo_mayor);
-		downheap(heap, pos_hijo_mayor);
+	size_t pos_hijo_mayor = max(vector, cmp, pos_hijo_izq, pos_hijo_der);
+	if (cmp(vector[posicion], vector[pos_hijo_mayor]) < 0) {
+		swap(vector, posicion, pos_hijo_mayor);
+		downheap(vector, tam_vector, cmp, pos_hijo_mayor);
 	}
 }
 
@@ -74,6 +74,28 @@ heap_t *heap_crear(cmp_func_t cmp) {
 	heap->cantidad = 0;
 	heap->tam = TAM_INICIAL;
 	return heap;
+}
+
+
+heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp) {
+	heap_t *heap = malloc(sizeof(heap_t));
+	if (!heap) return NULL;
+	heap->vector = heapify(arreglo, n, cmp); // Modificar segpun como quede heapify
+	heap->cmp = cmp;
+	heap->cantidad = n;
+	heap->tam = n * 2;
+	return heap;
+}
+
+
+void heap_destruir(heap_t *heap, void destruir_elemento(void *e)){
+	if (destruir_elemento) {
+		for (int i = 0; i < heap->cantidad; ++i) {
+			destruir_elemento(heap->vector[i]);
+		}
+	}
+	free(heap->vector);
+	free(heap);
 }
 
 
@@ -99,7 +121,7 @@ void *heap_desencolar(heap_t *heap) {
 	if (heap_esta_vacio(heap)) return NULL;
 	void *elem_a_devolver = heap->vector[0];
 	heap->vector[0] = heap->vector[heap->cantidad - 1];
-	downheap(heap, 0);
+	downheap(heap->vector, heap->cantidad, heap->cmp, 0);
 	heap->cantidad--;
 	for (int i = 0; i < heap->cantidad; ++i)
 	{
