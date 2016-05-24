@@ -29,18 +29,36 @@ void swap(void **vector, size_t posicion_a, size_t posicion_b) {
 
 
 void upheap(heap_t *heap, size_t posicion) {
-	//printf("ERROR\n");
+	if (posicion == 0) return;
 	size_t posicion_padre = (posicion - 1) / 2;
-	//printf("ERROR\n");
-	printf ("POSICION: %ld\n", posicion);
-	printf ("PISICION PADRE: %ld\n", posicion_padre);
-	if (heap->cmp(heap->vector[posicion], heap->vector[posicion_padre]) < 0) {
+	printf ("POSICION: %zu\n", posicion);
+	printf ("PISICION PADRE: %zu\n", posicion_padre);
+	if (heap->cmp(heap->vector[posicion], heap->vector[posicion_padre]) > 0) {
 		swap(heap->vector, posicion, posicion_padre);
 		upheap(heap, posicion_padre);
 	}
-	return;
 }
 
+
+size_t max(heap_t *heap, size_t posicion_a, size_t posicion_b) {
+	if (!posicion_a) return posicion_b;
+	if (!posicion_b) return posicion_a;
+	return (heap->cmp(heap->vector[posicion_a], heap->vector[posicion_b]) < 0) ? posicion_b : posicion_a;
+}
+
+
+void downheap(heap_t *heap, size_t posicion) {
+	size_t pos_hijo_izq = (2 * posicion) + 1;
+	size_t pos_hijo_der = (2 * posicion) + 2;
+	if (pos_hijo_izq >= heap->cantidad - 1) pos_hijo_izq = false;
+	if (pos_hijo_der >= heap->cantidad - 1) pos_hijo_der = false;
+	if (!pos_hijo_izq && !pos_hijo_der) return;
+	size_t pos_hijo_mayor = max(heap, pos_hijo_izq, pos_hijo_der);
+	if (heap->cmp(heap->vector[posicion], heap->vector[pos_hijo_mayor]) < 0) {
+		swap(heap->vector, posicion, pos_hijo_mayor);
+		downheap(heap, pos_hijo_mayor);
+	}
+}
 
 // Primitivas.
 
@@ -52,10 +70,12 @@ heap_t *heap_crear(cmp_func_t cmp) {
 		free(heap);
 		return NULL;
 	}
+	heap->cmp = cmp;
 	heap->cantidad = 0;
 	heap->tam = TAM_INICIAL;
 	return heap;
 }
+
 
 bool heap_encolar(heap_t *heap, void *elem) {
 	if (heap_esta_vacio(heap)) {
@@ -64,21 +84,43 @@ bool heap_encolar(heap_t *heap, void *elem) {
 		return true;
 	}
 	heap->vector[heap->cantidad] = elem;
-	//printf("ERROR\n");
 	upheap(heap, heap->cantidad);
-	printf("ERROR\n");
+	heap->cantidad++;
+	for (int i = 0; i < heap->cantidad; ++i)
+	{
+		printf("%i /", *(int*)heap->vector[i]);
+	}
+	printf("\n");
 	return true;
 }
+
+
+void *heap_desencolar(heap_t *heap) {
+	if (heap_esta_vacio(heap)) return NULL;
+	void *elem_a_devolver = heap->vector[0];
+	heap->vector[0] = heap->vector[heap->cantidad - 1];
+	downheap(heap, 0);
+	heap->cantidad--;
+	for (int i = 0; i < heap->cantidad; ++i)
+	{
+		printf("%i /", *(int*)heap->vector[i]);
+	}
+	printf("\n");
+	return elem_a_devolver;
+}
+
 
 void *heap_ver_max(const heap_t *heap){
 	if (heap->cantidad == 0) return NULL;
 	return heap->vector[0];
 }
 
+
 bool heap_esta_vacio(const heap_t *heap){
 	if (heap->cantidad == 0) return true;
 	return false;
 }
+
 
 size_t heap_cantidad(const heap_t *heap){
 	return heap->cantidad;
