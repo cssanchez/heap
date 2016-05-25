@@ -13,6 +13,7 @@
  *   mayor a 0  si  a > b
  */
 typedef int (*cmp_func_t) (const void *a, const void *b);
+void heapify(void*vector[], cmp_func_t cmp, size_t cantidad);
 
 
 /* Función de heapsort genérica. Esta función ordena mediante heap_sort
