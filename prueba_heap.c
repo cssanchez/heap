@@ -12,7 +12,7 @@ int func_comp(const void* a, const void* b){
 }
 
 
-void pruebas_heapify(){
+/*void pruebas_heapify(){
 	printf("PRUEBAS HEAPIFY \n");
 	int a = 4, b = 2, c = 5,d = 1, e = 9, f = 23,g = 8, h = 50, i = 16;
 
@@ -35,10 +35,10 @@ void pruebas_heapify(){
 
 void pruebas_heapsort(){
 	printf("PRUEBAS HEAPSORT \n");
-	int a = 4, b = 2, c = 5,d = 1, e = 9, f = 23,g = 8, h = 50, i = 16;
+	int a = 4, b = 2, c = 5,d = 1, e = 9, f = 23,g = 8, h = 50, i = 16,j=0,k=59;
 
-	void* vec_prueba[] = {&a,&b,&c,&d,&e,&f,&g,&h,&i};
-	size_t cantidad = 9;
+	void* vec_prueba[] = {&a,&b,&c,&d,&e,&f,&g,&h,&i,&j,&k};
+	size_t cantidad = 11;
 	printf("Vector antes del heapsort: ");
 	for (int i = 0; i < cantidad; ++i){
 		//printf("ERROR \n");
@@ -83,7 +83,7 @@ void pruebas_heap_crear_arr(){
 	print_test("Ver max del heap es NULL", heap_ver_max(heap) == NULL);
 
 	heap_destruir(heap,NULL);
-}
+}*/
 
 
 void pruebas_heap_alumno(){
@@ -114,8 +114,8 @@ void pruebas_heap_alumno(){
 	print_test("Desencolo", heap_desencolar(heap) == &a);
 	print_test("El heap esta vacio", heap_esta_vacio(heap));
 
-	pruebas_heapify();
-	pruebas_heapsort();
-	pruebas_heap_crear_arr();
+	//pruebas_heapify();
+	//pruebas_heapsort();
+	//pruebas_heap_crear_arr();
 	heap_destruir(heap,NULL);
 }

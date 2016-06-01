@@ -86,12 +86,12 @@ void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp){
 
 	heapify(elementos,cmp,cant);	
 	size_t i = cant -1;
-	while (i >= 1){
+	while (i > 0){
 		swap(elementos,0,i);
-		downheap(elementos,i-1,cmp,0);
+		downheap(elementos,i,cmp,0);
 		i--;
 	}
-	swap(elementos,1,0);
+	//swap(elementos,1,0);
 }
 
 
